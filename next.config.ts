@@ -1,4 +1,4 @@
-// QueueBareng - RedQueue v1.0.0
+// Redline - RedQueue 
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
