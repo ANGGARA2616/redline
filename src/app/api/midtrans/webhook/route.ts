@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getAdminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { Timestamp } from "firebase-admin/firestore";
 
 /**
@@ -19,8 +19,7 @@ export async function POST(req: Request) {
     console.log("Webhook received:", { order_id, transaction_status, userId, tier });
 
     if (transaction_status === "settlement" || transaction_status === "capture") {
-      const db = getAdminDb();
-      const userRef = db.collection("users").doc(userId);
+      const userRef = adminDb.collection("users").doc(userId);
 
       const expiresAt = new Date();
       expiresAt.setMonth(expiresAt.getMonth() + 1);

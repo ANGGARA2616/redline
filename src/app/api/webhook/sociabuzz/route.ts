@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 import { autoDetectPackage } from "@/lib/autoDetect";
 import type { Package, Jalur } from "@/types";
 import { Timestamp } from "firebase-admin/firestore";
@@ -63,9 +63,8 @@ export async function POST(request: NextRequest) {
     const mlId = mlIdMatch[1];
 
     // ── Look up streamer via Admin SDK ──
-    const db = getAdminDb();
     const slug = streamer_username.toLowerCase();
-    const usernameSnap = await db.collection("usernames").doc(slug).get();
+    const usernameSnap = await adminDb.collection("usernames").doc(slug).get();
 
     if (!usernameSnap.exists) {
       return NextResponse.json(
@@ -77,7 +76,7 @@ export async function POST(request: NextRequest) {
     const streamerId = usernameSnap.data()!.uid;
 
     // ── Find active session ──
-    const sessSnap = await db
+    const sessSnap = await adminDb
       .collection("sessions")
       .where("streamerId", "==", streamerId)
       .where("status", "==", "active")
@@ -94,7 +93,7 @@ export async function POST(request: NextRequest) {
     const sessionId = sessSnap.docs[0].id;
 
     // ── Get streamer's packages for auto-detect ──
-    const userSnap = await db.collection("users").doc(streamerId).get();
+    const userSnap = await adminDb.collection("users").doc(streamerId).get();
     let packages: Package[] = [];
 
     if (userSnap.exists) {
@@ -116,7 +115,7 @@ export async function POST(request: NextRequest) {
 
     // ── Create queue entry ──
     const now = Timestamp.now();
-    const entryRef = await db.collection("queueEntries").add({
+    const entryRef = await adminDb.collection("queueEntries").add({
       sessionId,
       streamerId,
       mlId,

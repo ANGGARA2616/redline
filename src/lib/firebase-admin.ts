@@ -1,25 +1,31 @@
 import * as admin from 'firebase-admin';
 
-let _adminApp: admin.app.App | null = null;
+let _adminApp: admin.app.App | undefined;
 
 function getAdminApp(): admin.app.App {
   if (_adminApp) return _adminApp;
 
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_BASE64) {
-    // Production: decode dari environment variable
+  if (admin.apps.length > 0) {
+    _adminApp = admin.apps[0]!;
+    return _adminApp;
+  }
+
+  const base64 = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+
+  if (base64) {
+    // Production (Vercel)
     const serviceAccount = JSON.parse(
-      Buffer.from(
-        process.env.FIREBASE_SERVICE_ACCOUNT_BASE64,
-        'base64'
-      ).toString('utf-8')
+      Buffer.from(base64, 'base64').toString('utf-8')
     );
     _adminApp = admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
+      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
     });
   } else {
-    // Development: baca dari file lokal
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const serviceAccount = require('../../service-account.json');
+    // Development (local) - gunakan eval untuk hindari 
+    // Turbopack static analysis
+    const path = '../../service-account.json';
+    // eslint-disable-next-line no-eval
+    const serviceAccount = eval('require')(path);
     _adminApp = admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
     });
@@ -30,10 +36,3 @@ function getAdminApp(): admin.app.App {
 
 export const adminApp = getAdminApp();
 export const adminDb = adminApp.firestore();
-
-/**
- * @deprecated Use adminDb directly
- */
-export function getAdminDb() {
-  return adminDb;
-}

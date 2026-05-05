@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAdminDb } from "@/lib/firebase-admin";
+import { adminDb } from "@/lib/firebase-admin";
 
 /**
  * GET /api/user/[username]
@@ -17,10 +17,8 @@ export async function GET(
   const slug = username.toLowerCase();
 
   try {
-    const db = getAdminDb();
-
     // Try usernames collection first (fast, single doc read)
-    const usernameSnap = await db.collection("usernames").doc(slug).get();
+    const usernameSnap = await adminDb.collection("usernames").doc(slug).get();
 
     if (usernameSnap.exists) {
       const data = usernameSnap.data()!;
@@ -32,7 +30,7 @@ export async function GET(
     }
 
     // Fallback: query users collection by username field
-    const usersSnap = await db
+    const usersSnap = await adminDb
       .collection("users")
       .where("username", "==", slug)
       .limit(1)
