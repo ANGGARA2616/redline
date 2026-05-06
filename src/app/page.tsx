@@ -2,34 +2,61 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
-import { Gamepad2, Zap, LayoutDashboard, ScrollText, RefreshCw, Globe, Wallet, ClipboardList, Video, CreditCard, Check, Sparkles, ShieldCheck } from "lucide-react";
+import {
+  Gamepad2,
+  Zap,
+  LayoutDashboard,
+  ScrollText,
+  RefreshCw,
+  Globe,
+  Wallet,
+  ClipboardList,
+  Video,
+  CreditCard,
+  Check,
+  Sparkles,
+  ShieldCheck,
+  ArrowRight,
+} from "lucide-react";
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="landing-theme min-h-screen flex flex-col">
+      {/* Animated ambient orbs */}
+      <div className="lp-ambient-orbs" aria-hidden="true">
+        <div className="lp-orb lp-orb--cyan-1" />
+        <div className="lp-orb lp-orb--magenta" />
+        <div className="lp-orb lp-orb--cyan-2" />
+      </div>
+
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 w-full z-50 glass-strong">
+      <nav className="lp-nav fixed top-0 w-full z-50">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
-            <Gamepad2 className="w-8 h-8 text-[var(--qb-primary)]" />
-            <span className="text-xl font-bold gradient-text">
+            <div className="relative">
+              <Gamepad2 className="w-7 h-7 lp-cyan-text" />
+              <div className="absolute inset-0 blur-md opacity-60">
+                <Gamepad2 className="w-7 h-7 lp-cyan-text" />
+              </div>
+            </div>
+            <span className="text-xl font-extrabold tracking-tight lp-gradient-text">
               QueueBareng
             </span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {loading ? null : user ? (
-              <Link href="/dashboard" className="btn btn-primary btn-sm">
+              <Link href="/dashboard" className="lp-btn lp-btn-primary lp-btn-sm">
                 Dashboard
               </Link>
             ) : (
               <>
-                <Link href="/login" className="btn btn-ghost btn-sm">
+                <Link href="/login" className="lp-btn lp-btn-ghost lp-btn-sm">
                   Masuk
                 </Link>
-                <Link href="/register" className="btn btn-primary btn-sm">
+                <Link href="/register" className="lp-btn lp-btn-primary lp-btn-sm">
                   Mulai Gratis
                 </Link>
               </>
@@ -38,64 +65,111 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      {/* ── Hero ── */}
-      <main className="flex-1">
-        <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-          {/* Background glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full opacity-20 blur-[120px]"
-            style={{ background: "radial-gradient(circle, var(--qb-primary), transparent)" }}
-          />
+      {/* Stats Ticker */}
+      <div className="lp-ticker fixed top-16 w-full z-40" aria-hidden="true">
+        <div className="lp-ticker-track">
+          <span><i></i> 4,287 ANTRIAN HARI INI</span>
+          <span><i className="m"></i> RP 142M DONASI TERPROSES</span>
+          <span><i className="g"></i> 99.97% UPTIME</span>
+          <span><i></i> 0 DISPUTE BULAN INI</span>
+          <span><i className="m"></i> 312 STREAMER AKTIF</span>
+          <span><i className="g"></i> AUTO-DETECT &lt; 80MS</span>
+          <span><i></i> 4,287 ANTRIAN HARI INI</span>
+          <span><i className="m"></i> RP 142M DONASI TERPROSES</span>
+          <span><i className="g"></i> 99.97% UPTIME</span>
+          <span><i></i> 0 DISPUTE BULAN INI</span>
+          <span><i className="m"></i> 312 STREAMER AKTIF</span>
+          <span><i className="g"></i> AUTO-DETECT &lt; 80MS</span>
+        </div>
+      </div>
 
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="badge badge-live mb-6 mx-auto">
-              <span className="w-2 h-2 rounded-full bg-[var(--qb-danger)] animate-pulse" />
-              LIVE
+      <main className="flex-1 relative z-10">
+        {/* ── Hero ── */}
+        <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+          <div className="lp-blob lp-blob--cyan" style={{ top: "0%", left: "-10%" }} />
+          <div className="lp-blob lp-blob--magenta" style={{ top: "10%", right: "-10%" }} />
+
+          <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left column - Text content */}
+            <div className="text-center lg:text-left">
+              <div className="lp-badge-live mb-5 inline-flex">
+                <span className="lp-badge-live__dot" />
+                LIVE · 312 STREAMER ON-AIR
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] mb-5 tracking-tight">
+                Antrian Mabar
+                <br />
+                Rasa{" "}
+                <span className="lp-gradient-text">Esports.</span>
+              </h1>
+
+              <p className="text-base sm:text-lg text-[var(--lp-text-dim)] max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto">
+                Auto-detect nominal donasi, antrian real-time dual-lane, dan game log anti-dispute. Satu dashboard untuk semua chaos saat live streaming Mobile Legends.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10 lg:mb-0">
+                <Link href="/register" className="lp-btn lp-btn-primary lp-btn-lg">
+                  Mulai Gratis 7 Hari
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href="#pricing" className="lp-btn lp-btn-secondary lp-btn-lg">
+                  Lihat Harga
+                </Link>
+              </div>
+
+              <div className="lp-hero-meta justify-center lg:justify-start">
+                <div className="stat">
+                  <strong><em>312</em></strong>
+                  Streamer aktif
+                </div>
+                <div className="stat">
+                  <strong><em>4.2K</em></strong>
+                  Antrian / hari
+                </div>
+                <div className="stat">
+                  <strong><em>0</em></strong>
+                  Dispute bulan ini
+                </div>
+              </div>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-              Kelola Antrian{" "}
-              <span className="gradient-text">Main Bareng</span>
-              <br />
-              Tanpa Ribet
-            </h1>
-
-            <p className="text-lg sm:text-xl text-[var(--text-secondary)] max-w-2xl mx-auto mb-10 leading-relaxed">
-              Platform otomatis untuk live streamer Mobile Legends.
-              Auto-detect nominal donasi, antrian real-time, game log
-              anti-dispute — semua dalam satu dashboard.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/register" className="btn btn-primary btn-lg">
-                🚀 Coba Gratis 7 Hari
-              </Link>
-              <Link href="/pricing" className="btn btn-secondary btn-lg">
-                Lihat Harga
-              </Link>
+            {/* Right column - Dashboard Preview */}
+            <div className="lg:pl-4">
+              <DashboardPreview />
             </div>
           </div>
         </section>
 
-        {/* ── Features ── */}
-        <section className="py-20 px-6">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-4">
-              Semua yang Kamu Butuhkan
-            </h2>
-            <p className="text-center text-[var(--text-secondary)] mb-14 max-w-xl mx-auto">
-              Dari input order sampai game log, QueueBareng mengurus semuanya.
-            </p>
+        <div className="lp-divider max-w-5xl mx-auto" />
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((f, i) => (
+        {/* ── Features ── */}
+        <section className="py-24 px-6 relative">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
+                Fitur
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black mb-4">
+                Semua yang Kamu <span className="lp-gradient-text">Butuhkan</span>
+              </h2>
+              <p className="text-[var(--lp-text-dim)] max-w-xl mx-auto">
+                Dari input order sampai game log, QueueBareng mengurus semuanya.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {FEATURES.map((f, i) => (
                 <div
                   key={i}
-                  className="card group hover:border-[var(--qb-primary)] animate-fade-in"
+                  className="lp-card animate-fade-in"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
-                  <div className="text-3xl mb-4">{f.icon}</div>
-                  <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
+                  <div className={`lp-card-icon ${f.magenta ? "lp-card-icon--magenta" : ""}`}>
+                    <f.icon className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-white">{f.title}</h3>
+                  <p className="text-sm text-[var(--lp-text-dim)] leading-relaxed">
                     {f.desc}
                   </p>
                 </div>
@@ -105,25 +179,35 @@ export default function LandingPage() {
         </section>
 
         {/* ── How it works ── */}
-        <section className="py-20 px-6 bg-[var(--bg-surface)]">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-14">
-              Cara Kerja
-            </h2>
+        <section className="py-24 px-6 relative">
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(0,245,255,0.08), transparent 60%)",
+            }}
+          />
+
+          <div className="max-w-5xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-magenta-text border border-[rgba(255,45,120,0.3)] rounded-full">
+                Cara Kerja
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black">
+                Dari Donasi ke <span className="lp-gradient-text">Antrian</span>
+              </h2>
+            </div>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {steps.map((s, i) => (
-                <div key={i} className="text-center animate-fade-in" style={{ animationDelay: `${i * 100}ms` }}>
-                  <div className="w-14 h-14 rounded-full bg-[var(--bg-glass)] border border-[var(--border-default)] flex items-center justify-center text-2xl mx-auto mb-4">
-                    {s.icon}
-                  </div>
-                  <div className="text-xs font-semibold text-[var(--qb-primary-light)] mb-1">
-                    STEP {i + 1}
-                  </div>
-                  <h3 className="font-semibold mb-1">{s.title}</h3>
-                  <p className="text-sm text-[var(--text-secondary)]">
-                    {s.desc}
-                  </p>
+              {STEPS.map((s, i) => (
+                <div
+                  key={i}
+                  className="text-center animate-fade-in relative"
+                  style={{ animationDelay: `${i * 100}ms` }}
+                >
+                  <div className="lp-step-num mx-auto">{String(i + 1).padStart(2, "0")}</div>
+                  <h3 className="font-bold text-white mb-2">{s.title}</h3>
+                  <p className="text-sm text-[var(--lp-text-dim)]">{s.desc}</p>
                 </div>
               ))}
             </div>
@@ -131,60 +215,62 @@ export default function LandingPage() {
         </section>
 
         {/* ── Pricing ── */}
-        <section className="py-20 px-6 relative" id="pricing">
+        <section className="py-24 px-6 relative" id="pricing">
           <div className="max-w-6xl mx-auto relative z-10">
-            <div className="text-center mb-14">
-              <h2 className="text-3xl font-bold mb-4">
-                Pilih Paket <span className="gradient-text">QueueBareng</span>
+            <div className="text-center mb-16">
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
+                Harga
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black mb-4">
+                Pilih Paket <span className="lp-gradient-text">QueueBareng</span>
               </h2>
-              <p className="text-[var(--text-secondary)] max-w-2xl mx-auto">
-                Tingkatkan efisiensi manajemen antrian mabar Anda dengan platform profesional.
+              <p className="text-[var(--lp-text-dim)] max-w-2xl mx-auto">
+                Tingkatkan efisiensi manajemen antrian mabar Anda.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto items-center">
+            <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-stretch">
               {TIERS.map((tier) => (
                 <div
                   key={tier.id}
-                  className={`relative glass-strong rounded-[var(--radius-xl)] p-8 transition-all hover:-translate-y-2 ${
-                    tier.border
-                  } ${tier.popular ? `scale-105 ${tier.shadow}` : ""}`}
+                  className={`lp-pricing ${tier.popular ? "lp-pricing--popular" : ""}`}
                 >
-                  {tier.popular && (
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-[var(--qb-fast-track)] text-[var(--bg-base)] text-xs font-bold rounded-full uppercase tracking-wider shadow-lg">
-                      Paling Laris
-                    </div>
-                  )}
+                  {tier.popular && <div className="lp-pricing-tag">Paling Laris</div>}
 
                   <div className="flex items-center gap-3 mb-6">
-                    <div className={`p-3 rounded-xl bg-[var(--bg-elevated)] ${tier.color}`}>
+                    <div
+                      className={`lp-card-icon ${tier.popular ? "lp-card-icon--magenta" : ""}`}
+                      style={{ marginBottom: 0 }}
+                    >
                       <tier.icon className="w-6 h-6" />
                     </div>
-                    <h3 className="text-xl font-bold">{tier.name}</h3>
+                    <h3 className="text-xl font-extrabold text-white">{tier.name}</h3>
                   </div>
 
                   <div className="mb-6">
-                    <span className="text-3xl font-bold">
+                    <span className="text-4xl font-black text-white">
                       Rp {(tier.price / 1000).toLocaleString("id-ID")}k
                     </span>
-                    <span className="text-[var(--text-muted)]">/bulan</span>
+                    <span className="text-[var(--lp-text-muted)] ml-1">/bulan</span>
                   </div>
 
-                  <div className="space-y-4 mb-8">
+                  <div className="space-y-3 mb-8">
                     {tier.features.map((feature, i) => (
                       <div key={i} className="flex items-start gap-3">
-                        <Check className={`w-5 h-5 shrink-0 ${tier.color}`} />
-                        <span className="text-sm text-[var(--text-secondary)]">{feature}</span>
+                        <Check
+                          className={`w-5 h-5 shrink-0 mt-0.5 ${
+                            tier.popular ? "lp-magenta-text" : "lp-cyan-text"
+                          }`}
+                        />
+                        <span className="text-sm text-[var(--lp-text-dim)]">{feature}</span>
                       </div>
                     ))}
                   </div>
 
                   <Link
                     href={`/register?tier=${tier.id}`}
-                    className={`w-full py-3 px-4 rounded-[var(--radius-md)] font-bold transition-all flex items-center justify-center gap-2 ${
-                      tier.popular
-                        ? "bg-[var(--qb-fast-track)] text-[var(--bg-base)] hover:bg-[rgba(253,203,110,0.9)] shadow-[0_4px_15px_rgba(253,203,110,0.3)]"
-                        : "bg-[var(--bg-elevated)] text-[var(--text-primary)] hover:bg-[rgba(255,255,255,0.1)] border border-[var(--border-default)]"
+                    className={`lp-btn w-full ${
+                      tier.popular ? "lp-btn-primary" : "lp-btn-secondary"
                     }`}
                   >
                     Pilih {tier.name}
@@ -194,30 +280,44 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
         {/* ── CTA ── */}
-        <section className="py-20 px-6">
-          <div className="max-w-2xl mx-auto text-center">
-            <h2 className="text-3xl font-bold mb-4">
-              Siap Upgrade Antrian Kamu?
-            </h2>
-            <p className="text-[var(--text-secondary)] mb-8">
-              Daftar sekarang dan nikmati 7 hari gratis. Tanpa kartu kredit.
-            </p>
-            <Link href="/register" className="btn btn-accent btn-lg">
-              Mulai Sekarang →
-            </Link>
+        <section className="py-24 px-6 relative overflow-hidden">
+          <div className="lp-blob lp-blob--cyan" style={{ bottom: "-30%", left: "20%", opacity: 0.3 }} />
+          <div className="lp-blob lp-blob--magenta" style={{ bottom: "-30%", right: "20%", opacity: 0.3 }} />
+
+          <div className="max-w-3xl mx-auto text-center relative z-10">
+            <div
+              className="rounded-3xl p-12 sm:p-16 border"
+              style={{
+                background: "linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.005))",
+                borderColor: "var(--lp-border)",
+                boxShadow: "0 0 60px rgba(0, 245, 255, 0.1), inset 0 1px 0 rgba(255,255,255,0.05)",
+              }}
+            >
+              <h2 className="text-3xl sm:text-5xl font-black mb-4">
+                Siap Upgrade <span className="lp-gradient-text">Antrian Kamu</span>?
+              </h2>
+              <p className="text-[var(--lp-text-dim)] mb-8 text-lg">
+                Daftar sekarang dan nikmati 7 hari gratis. Tanpa kartu kredit.
+              </p>
+              <Link href="/register" className="lp-btn lp-btn-primary lp-btn-lg">
+                Mulai Sekarang
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </section>
       </main>
 
       {/* ── Footer ── */}
-      <footer className="py-8 px-6 border-t border-[var(--border-default)]">
+      <footer className="py-10 px-6 border-t border-[var(--lp-border)] relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <Gamepad2 className="w-5 h-5 text-[var(--qb-primary-light)]" />
-            <span className="font-semibold gradient-text">QueueBareng</span>
+            <Gamepad2 className="w-5 h-5 lp-cyan-text" />
+            <span className="font-bold lp-gradient-text">QueueBareng</span>
           </div>
-          <p className="text-sm text-[var(--text-muted)]">
+          <p className="text-sm text-[var(--lp-text-muted)]">
             © {new Date().getFullYear()} QueueBareng. All rights reserved.
           </p>
         </div>
@@ -226,62 +326,146 @@ export default function LandingPage() {
   );
 }
 
+// ── Dashboard Preview Component ──
+function DashboardPreview() {
+  return (
+    <div className="select-none">
+      <div className="lp-dashboard">
+        <div className="lp-dash-bar">
+          <span className="lp-status-pill">
+            <span className="lp-pip-mg" />
+            SEDANG BERMAIN
+          </span>
+        </div>
+
+        <div className="lp-dash-body">
+          {/* Active Slots */}
+          <div className="lp-slots-grid">
+            <div className="lp-slot">
+              <div className="lp-slot-top-bar" />
+              <div className="lp-slot-head">
+                <span className="lp-slot-id">1234567</span>
+                <span className="lp-slot-tag lp-slot-tag--norm">NORMAL</span>
+              </div>
+              <div className="lp-slot-game">
+                <span>Game 2 / 5</span>
+                <span className="sisa">3 sisa</span>
+              </div>
+              <div className="lp-progress">
+                <div className="lp-bar" style={{ width: "40%" }} />
+              </div>
+            </div>
+
+            <div className="lp-slot">
+              <div className="lp-slot-top-bar lp-slot-top-bar--fast" />
+              <div className="lp-slot-head">
+                <span className="lp-slot-id">3333333</span>
+                <span className="lp-slot-tag lp-slot-tag--fast">FAST TRACK</span>
+              </div>
+              <div className="lp-slot-game">
+                <span>Game 1 / 8</span>
+                <span className="sisa">7 sisa</span>
+              </div>
+              <div className="lp-progress">
+                <div className="lp-bar lp-bar--fast" style={{ width: "12%" }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Call Next Button */}
+          <button className="lp-call-next">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="5,4 15,12 5,20" fill="currentColor" />
+              <line x1="19" y1="5" x2="19" y2="19" />
+            </svg>
+            Panggil Berikutnya
+          </button>
+
+          {/* Queue Lanes */}
+          <div className="lp-lanes">
+            <div className="lp-lane">
+              <div className="lp-lane-head">
+                <span className="lp-lane-title">FAST TRACK</span>
+                <span className="lp-lane-count lp-lane-count--fast">2</span>
+              </div>
+              <div className="lp-qrow">
+                <span className="lp-qnum lp-qnum--fast">1</span>
+                <span className="lp-qid">1111111</span>
+                <span className="lp-qmeta"><b>7</b> game</span>
+              </div>
+              <div className="lp-qrow">
+                <span className="lp-qnum lp-qnum--fast">2</span>
+                <span className="lp-qid">12345678</span>
+                <span className="lp-qmeta"><b>3</b> game</span>
+              </div>
+            </div>
+
+            <div className="lp-lane">
+              <div className="lp-lane-head">
+                <span className="lp-lane-title lp-lane-title--norm">NORMAL</span>
+                <span className="lp-lane-count lp-lane-count--norm">2</span>
+              </div>
+              <div className="lp-qrow">
+                <span className="lp-qnum lp-qnum--norm">1</span>
+                <span className="lp-qid">9999999</span>
+                <span className="lp-qmeta"><b>5</b> game</span>
+              </div>
+              <div className="lp-qrow">
+                <span className="lp-qnum lp-qnum--norm">2</span>
+                <span className="lp-qid">8888888</span>
+                <span className="lp-qmeta"><b>2</b> game</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Static data ──
 
-const features = [
+const FEATURES = [
   {
-    icon: <Zap className="w-8 h-8 text-[var(--qb-fast-track)]" />,
+    icon: Zap,
     title: "Auto-Detect Nominal",
     desc: "Input nominal donasi, sistem otomatis mendeteksi paket dan jalur antrian. Tidak perlu hitung manual.",
   },
   {
-    icon: <LayoutDashboard className="w-8 h-8 text-[var(--qb-accent)]" />,
+    icon: LayoutDashboard,
     title: "Queue Real-Time",
     desc: "Dashboard dua jalur (Fast Track & Normal) yang update otomatis tanpa refresh.",
+    magenta: true,
   },
   {
-    icon: <ScrollText className="w-8 h-8 text-[var(--qb-primary-light)]" />,
+    icon: ScrollText,
     title: "Game Log Anti-Dispute",
     desc: "Setiap game tercatat dengan timestamp. Tidak ada lagi customer yang bisa bohong.",
   },
   {
-    icon: <RefreshCw className="w-8 h-8 text-[var(--qb-success)]" />,
+    icon: RefreshCw,
     title: "Carry-Over Otomatis",
     desc: "Sisa game tersimpan dan muncul otomatis di sesi live berikutnya.",
+    magenta: true,
   },
   {
-    icon: <Globe className="w-8 h-8 text-[var(--qb-normal)]" />,
+    icon: Globe,
     title: "Public Queue Page",
     desc: "Link antrian yang bisa di-share ke penonton. Real-time dan mobile-friendly.",
   },
   {
-    icon: <Wallet className="w-8 h-8 text-[var(--qb-warning)]" />,
+    icon: Wallet,
     title: "Paket Harga Fleksibel",
     desc: "Atur sendiri paket harga, termasuk bundle. Sistem auto-mapping dari nominal.",
+    magenta: true,
   },
 ];
 
-const steps = [
-  {
-    icon: <ClipboardList className="w-6 h-6 text-[var(--qb-normal)]" />,
-    title: "Setup Paket",
-    desc: "Atur daftar harga paket main bareng kamu.",
-  },
-  {
-    icon: <Video className="w-6 h-6 text-[var(--qb-primary)]" />,
-    title: "Mulai Sesi",
-    desc: "Buka sesi live baru saat mulai streaming.",
-  },
-  {
-    icon: <CreditCard className="w-6 h-6 text-[var(--qb-accent)]" />,
-    title: "Input Donasi",
-    desc: "Masukkan nominal & ML ID, antrian terbentuk otomatis.",
-  },
-  {
-    icon: <Gamepad2 className="w-6 h-6 text-[var(--qb-success)]" />,
-    title: "Main!",
-    desc: "Klik mulai & selesai game. Log otomatis tercatat.",
-  },
+const STEPS = [
+  { icon: ClipboardList, title: "Setup Paket", desc: "Atur daftar harga paket main bareng kamu." },
+  { icon: Video, title: "Mulai Sesi", desc: "Buka sesi live baru saat mulai streaming." },
+  { icon: CreditCard, title: "Input Donasi", desc: "Masukkan nominal & ML ID, antrian terbentuk otomatis." },
+  { icon: Gamepad2, title: "Main!", desc: "Klik mulai & selesai game. Log otomatis tercatat." },
 ];
 
 const TIERS = [
@@ -296,10 +480,6 @@ const TIERS = [
       "Dukungan komunitas",
     ],
     icon: Zap,
-    color: "text-[var(--qb-normal)]",
-    bg: "bg-[var(--qb-normal)]",
-    border: "border-[rgba(116,185,255,0.3)]",
-    shadow: "shadow-[0_0_15px_rgba(116,185,255,0.15)]",
   },
   {
     id: "pro",
@@ -312,10 +492,6 @@ const TIERS = [
       "Prioritas dukungan tim",
     ],
     icon: Sparkles,
-    color: "text-[var(--qb-fast-track)]",
-    bg: "bg-[var(--qb-fast-track)]",
-    border: "border-[var(--qb-fast-track)]",
-    shadow: "shadow-[0_0_20px_rgba(253,203,110,0.3)]",
     popular: true,
   },
   {
@@ -329,9 +505,5 @@ const TIERS = [
       "Akses API (Post-MVP)",
     ],
     icon: ShieldCheck,
-    color: "text-[var(--qb-accent)]",
-    bg: "bg-[var(--qb-accent)]",
-    border: "border-[rgba(0,206,201,0.3)]",
-    shadow: "shadow-[0_0_15px_rgba(0,206,201,0.15)]",
   },
 ];
