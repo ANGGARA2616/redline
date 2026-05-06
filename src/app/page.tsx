@@ -58,6 +58,9 @@ export default function LandingPage() {
           </Link>
 
           <div className="hidden md:flex items-center gap-8">
+            <Link href="#demo" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
+              Live Demo
+            </Link>
             <Link href="#features" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
               Fitur
             </Link>
@@ -164,6 +167,26 @@ export default function LandingPage() {
             <div className="lg:pl-4">
               <DashboardPreview />
             </div>
+          </div>
+        </section>
+
+        {/* ── Live Demo / Explainer ── */}
+        <section className="py-16 px-6 relative" id="demo">
+          <div className="max-w-6xl mx-auto relative z-10">
+            <div className="text-center mb-16">
+              <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
+                Live Demo
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black mb-4">
+                Dari donasi penonton<br />
+                <span className="lp-gradient-text">ke antrian dashboard.</span>
+              </h2>
+              <p className="text-[var(--lp-text-dim)] max-w-xl mx-auto">
+                Lihat bagaimana sebuah donasi otomatis ter-parse jadi entry antrian — tanpa input manual, tanpa delay.
+              </p>
+            </div>
+
+            <LiveDemoAnimation />
           </div>
         </section>
 
@@ -371,6 +394,138 @@ export default function LandingPage() {
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// ── Live Demo Animation Component ──
+function LiveDemoAnimation() {
+  return (
+    <div className="lp-explainer-stage">
+      {/* LEFT: Stream + Chat */}
+      <div>
+        <div className="lp-stream-panel">
+          <div className="lp-stream-bar">
+            <span className="lp-stream-live">
+              <i></i>LIVE
+            </span>
+            <span className="lp-stream-viewers">👁 2,481</span>
+          </div>
+
+          <div className="lp-stream-view">
+            <div className="lp-stream-hud">
+              <div className="top">
+                <span className="lp-stream-badge">
+                  RANK · <b>MYTHIC</b>
+                </span>
+                <span className="lp-stream-badge">15:42 · 04:18</span>
+              </div>
+            </div>
+
+            {/* Donation popup that animates in */}
+            <div className="lp-don-popup">
+              <div className="top">
+                <div className="nom">Rp 50.000</div>
+                <div className="from">
+                  dari <b>ReddRoses</b>
+                </div>
+              </div>
+              <div className="id">ML ID · 166047234</div>
+              <div className="msg">"gas kak, aim-nya jangan miss 🔥"</div>
+            </div>
+          </div>
+
+          <div className="lp-live-chat">
+            <div className="head">// LIVE CHAT</div>
+            <div className="lp-chat-msg">
+              <b>NikoX:</b> mantap kak
+            </div>
+            <div className="lp-chat-msg">
+              <b>FahmiR:</b> kapan mabar?
+            </div>
+            <div className="lp-chat-msg">
+              <b>JJaay:</b> push terus
+            </div>
+            <div className="lp-chat-msg">
+              <b>Tania_:</b> 1 lagi kalah
+            </div>
+            <div className="lp-chat-msg donate">
+              <b>ReddRoses</b> donasi 50K
+            </div>
+            <div className="lp-chat-msg">
+              <b>RioG:</b> wkwkwk
+            </div>
+            <div className="lp-chat-msg">
+              <b>Kak_Ezra:</b> 🔥🔥🔥
+            </div>
+          </div>
+        </div>
+        <div className="lp-ex-caption mg">
+          01 · <b>Donasi masuk</b> di livestream
+        </div>
+      </div>
+
+      {/* Data flow connector */}
+      <div className="lp-data-flow">
+        <div className="lp-data-packet"></div>
+        <div className="lp-data-packet p2"></div>
+        <div className="lp-data-packet p3"></div>
+      </div>
+
+      {/* RIGHT: Dashboard reveal */}
+      <div>
+        <div className="lp-ex-dashboard">
+          <div className="lp-dash-bar-ex">
+            <span style={{ color: "var(--lp-text-muted)" }}>
+              redline.app/dashboard
+            </span>
+            <span className="lt">
+              <i></i>SYNCED
+            </span>
+          </div>
+          <div className="lp-ex-lane">
+            <h4>
+              FAST TRACK <span className="count">5</span>
+            </h4>
+            <div className="lp-ex-row">
+              <span className="n">01</span>
+              <span className="nm">
+                RyzenML <small>ML · 192847123</small>
+              </span>
+              <span className="pk">100k</span>
+            </div>
+            <div className="lp-ex-row">
+              <span className="n">02</span>
+              <span className="nm">
+                Kak_Ezra <small>ML · 287340912</small>
+              </span>
+              <span className="pk">100k</span>
+            </div>
+            <div className="lp-ex-row incoming">
+              <span className="n">03</span>
+              <span className="nm nm-wrap">
+                <span className="nm-pending">
+                  ??? <small>menunggu data...</small>
+                </span>
+                <span className="nm-real">
+                  ReddRoses <small>ML · 166047234</small>
+                </span>
+              </span>
+              <span className="pk">50k</span>
+            </div>
+            <div className="lp-ex-row" style={{ opacity: 0.5 }}>
+              <span className="n">04</span>
+              <span className="nm">
+                DwiPro <small>ML · 309821740</small>
+              </span>
+              <span className="pk">200k</span>
+            </div>
+          </div>
+        </div>
+        <div className="lp-ex-caption">
+          02 · <b>Dashboard ter-update</b> otomatis
+        </div>
+      </div>
     </div>
   );
 }
