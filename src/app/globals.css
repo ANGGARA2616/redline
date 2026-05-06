@@ -562,9 +562,9 @@ body {
   --lp-bg: #0a0a0f;
   --lp-bg-2: #11111a;
   --lp-bg-3: #16161f;
-  --lp-cyan: #00f5ff;
-  --lp-cyan-soft: rgba(0, 245, 255, 0.12);
-  --lp-cyan-glow: rgba(0, 245, 255, 0.35);
+  --lp-cyan: #5ddbff;
+  --lp-cyan-soft: rgba(93, 219, 255, 0.12);
+  --lp-cyan-glow: rgba(93, 219, 255, 0.25);
   --lp-magenta: #ff2d78;
   --lp-magenta-soft: rgba(255, 45, 120, 0.12);
   --lp-magenta-glow: rgba(255, 45, 120, 0.35);
@@ -589,8 +589,8 @@ body {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(0, 245, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 255, 0.025) 1px, transparent 1px);
+    linear-gradient(rgba(93, 219, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93, 219, 255, 0.015) 1px, transparent 1px);
   background-size: 56px 56px;
   pointer-events: none;
   z-index: 0;
@@ -611,7 +611,7 @@ body {
   position: absolute;
   border-radius: 50%;
   filter: blur(120px);
-  opacity: 0.18;
+  opacity: 0.12;
 }
 
 .lp-orb--cyan-1 {
@@ -629,7 +629,7 @@ body {
   background: var(--lp-magenta);
   right: -10%;
   top: 16%;
-  opacity: 0.14;
+  opacity: 0.10;
   animation: lp-drift2 28s ease-in-out infinite;
 }
 
@@ -639,7 +639,7 @@ body {
   background: var(--lp-cyan);
   left: 30%;
   top: 80%;
-  opacity: 0.10;
+  opacity: 0.08;
   animation: lp-drift3 32s ease-in-out infinite;
 }
 
@@ -659,10 +659,11 @@ body {
 }
 
 .lp-nav {
-  background: rgba(10, 10, 15, 0.7);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-bottom: 1px solid var(--lp-border);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
 }
 
 /* Stats Ticker */

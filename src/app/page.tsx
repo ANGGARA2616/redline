@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { useState, useEffect } from "react";
 import {
   Gamepad2,
   Zap,
@@ -17,10 +18,20 @@ import {
   Sparkles,
   ShieldCheck,
   ArrowRight,
+  ChevronDown,
 } from "lucide-react";
 
 export default function LandingPage() {
   const { user, loading } = useAuth();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="landing-theme min-h-screen flex flex-col">
@@ -32,8 +43,8 @@ export default function LandingPage() {
       </div>
 
       {/* ── Navbar ── */}
-      <nav className="lp-nav fixed top-0 w-full z-50">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'lp-nav' : 'bg-transparent'}`}>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative">
               <Gamepad2 className="w-7 h-7 lp-cyan-text" />
@@ -42,18 +53,33 @@ export default function LandingPage() {
               </div>
             </div>
             <span className="text-xl font-extrabold tracking-tight lp-gradient-text">
-              QueueBareng
+              RedLine
             </span>
           </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            <Link href="#features" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
+              Fitur
+            </Link>
+            <Link href="#how" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
+              Cara Kerja
+            </Link>
+            <Link href="#pricing" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
+              Harga
+            </Link>
+            <Link href="#faq" className="text-sm font-medium text-[var(--lp-text-dim)] hover:text-white transition-colors">
+              FAQ
+            </Link>
+          </div>
 
           <div className="flex items-center gap-2">
             {loading ? null : user ? (
               <Link href="/dashboard" className="lp-btn lp-btn-primary lp-btn-sm">
-                Dashboard
+                Dashboard →
               </Link>
             ) : (
               <>
-                <Link href="/login" className="lp-btn lp-btn-ghost lp-btn-sm">
+                <Link href="/login" className="lp-btn lp-btn-ghost lp-btn-sm hidden sm:inline-flex">
                   Masuk
                 </Link>
                 <Link href="/register" className="lp-btn lp-btn-primary lp-btn-sm">
@@ -85,7 +111,7 @@ export default function LandingPage() {
 
       <main className="flex-1 relative z-10">
         {/* ── Hero ── */}
-        <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <section className="relative pt-40 pb-20 px-6 overflow-hidden -mt-16">
           <div className="lp-blob lp-blob--cyan" style={{ top: "0%", left: "-10%" }} />
           <div className="lp-blob lp-blob--magenta" style={{ top: "10%", right: "-10%" }} />
 
@@ -144,7 +170,7 @@ export default function LandingPage() {
         <div className="lp-divider max-w-5xl mx-auto" />
 
         {/* ── Features ── */}
-        <section className="py-24 px-6 relative">
+        <section className="py-16 px-6 relative">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
@@ -154,7 +180,7 @@ export default function LandingPage() {
                 Semua yang Kamu <span className="lp-gradient-text">Butuhkan</span>
               </h2>
               <p className="text-[var(--lp-text-dim)] max-w-xl mx-auto">
-                Dari input order sampai game log, QueueBareng mengurus semuanya.
+                Dari input order sampai game log, RedLine mengurus semuanya.
               </p>
             </div>
 
@@ -179,7 +205,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── How it works ── */}
-        <section className="py-24 px-6 relative">
+        <section className="py-16 px-6 relative">
           <div
             className="absolute inset-0 opacity-30"
             style={{
@@ -215,14 +241,14 @@ export default function LandingPage() {
         </section>
 
         {/* ── Pricing ── */}
-        <section className="py-24 px-6 relative" id="pricing">
+        <section className="py-16 px-6 relative" id="pricing">
           <div className="max-w-6xl mx-auto relative z-10">
             <div className="text-center mb-16">
               <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
                 Harga
               </div>
               <h2 className="text-3xl sm:text-4xl font-black mb-4">
-                Pilih Paket <span className="lp-gradient-text">QueueBareng</span>
+                Pilih Paket <span className="lp-gradient-text">RedLine</span>
               </h2>
               <p className="text-[var(--lp-text-dim)] max-w-2xl mx-auto">
                 Tingkatkan efisiensi manajemen antrian mabar Anda.
@@ -281,8 +307,31 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ── FAQ ── */}
+        <section className="py-12 px-6 relative" id="faq">
+          <div className="max-w-3xl mx-auto relative z-10">
+            <div className="text-center mb-10">
+              <div className="inline-block px-3 py-1 mb-3 text-xs font-bold tracking-widest uppercase lp-magenta-text border border-[rgba(255,45,120,0.3)] rounded-full">
+                FAQ
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black mb-3">
+                Pertanyaan <span className="lp-gradient-text">Umum</span>
+              </h2>
+              <p className="text-sm text-[var(--lp-text-dim)] max-w-xl mx-auto">
+                Jawaban untuk pertanyaan yang sering ditanyakan tentang RedLine.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              {FAQS.map((faq, i) => (
+                <FAQItem key={i} question={faq.question} answer={faq.answer} />
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── CTA ── */}
-        <section className="py-24 px-6 relative overflow-hidden">
+        <section className="py-16 px-6 relative overflow-hidden">
           <div className="lp-blob lp-blob--cyan" style={{ bottom: "-30%", left: "20%", opacity: 0.3 }} />
           <div className="lp-blob lp-blob--magenta" style={{ bottom: "-30%", right: "20%", opacity: 0.3 }} />
 
@@ -315,13 +364,45 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Gamepad2 className="w-5 h-5 lp-cyan-text" />
-            <span className="font-bold lp-gradient-text">QueueBareng</span>
+            <span className="font-bold lp-gradient-text">RedLine</span>
           </div>
           <p className="text-sm text-[var(--lp-text-muted)]">
-            © {new Date().getFullYear()} QueueBareng. All rights reserved.
+            © {new Date().getFullYear()} RedLine. All rights reserved.
           </p>
         </div>
       </footer>
+    </div>
+  );
+}
+
+// ── FAQ Item Component ──
+function FAQItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="lp-card">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between gap-4 text-left"
+      >
+        <h3 className="text-base font-bold text-white">{question}</h3>
+        <ChevronDown
+          className={`w-4 h-4 lp-cyan-text shrink-0 transition-transform duration-300 ${
+            isOpen ? "rotate-180" : ""
+          }`}
+        />
+      </button>
+      <div
+        className={`grid transition-all duration-300 ${
+          isOpen ? "grid-rows-[1fr] mt-3" : "grid-rows-[0fr]"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="text-sm text-[var(--lp-text-dim)] leading-relaxed">
+            {answer}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -505,5 +586,32 @@ const TIERS = [
       "Akses API (Post-MVP)",
     ],
     icon: ShieldCheck,
+  },
+];
+
+const FAQS = [
+  {
+    question: "Bagaimana cara kerja auto-detect nominal donasi?",
+    answer: "Sistem RedLine otomatis mendeteksi paket berdasarkan nominal donasi yang Anda input. Misalnya, jika Anda atur paket 50k untuk 5 game dan ada donasi 100k, sistem langsung mendeteksi sebagai 10 game dan menempatkan di jalur yang sesuai.",
+  },
+  {
+    question: "Apakah saya perlu install aplikasi khusus?",
+    answer: "Tidak perlu. RedLine adalah aplikasi web yang bisa diakses langsung dari browser. Cukup login dan mulai kelola antrian Anda. Dashboard dapat dibuka di laptop, tablet, atau smartphone.",
+  },
+  {
+    question: "Bagaimana jika ada dispute dari customer?",
+    answer: "RedLine mencatat setiap game dengan timestamp lengkap di game log. Anda bisa tunjukkan riwayat game yang sudah dimainkan sebagai bukti. Fitur ini sangat membantu menghindari dispute dan menjaga reputasi Anda.",
+  },
+  {
+    question: "Apakah bisa mengatur paket harga custom?",
+    answer: "Ya, Anda bisa atur paket harga sesuai kebutuhan. Bisa buat paket normal (5k/game), fast track (10k/game), atau bundle special seperti 50k untuk 6 game. Sistem akan otomatis mapping dari nominal donasi.",
+  },
+  {
+    question: "Bagaimana dengan sisa game yang belum selesai?",
+    answer: "Sisa game otomatis tersimpan dan akan muncul kembali di sesi live berikutnya. Fitur carry-over ini memastikan customer tidak kehilangan hak mereka meskipun live stream sudah selesai.",
+  },
+  {
+    question: "Apakah ada trial gratis?",
+    answer: "Ya, semua paket mendapatkan free trial 7 hari tanpa perlu kartu kredit. Anda bisa mencoba semua fitur dan lihat sendiri bagaimana RedLine membantu manajemen antrian Anda.",
   },
 ];
