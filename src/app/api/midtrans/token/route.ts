@@ -33,7 +33,7 @@ export async function POST(req: Request) {
           id: tier,
           price: price,
           quantity: 1,
-          name: `QueueBareng ${tier.charAt(0).toUpperCase() + tier.slice(1)} Subscription`,
+          name: `RedLine ${tier.charAt(0).toUpperCase() + tier.slice(1)} Subscription`,
         },
       ],
       custom_field1: userId,

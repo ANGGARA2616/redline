@@ -217,7 +217,7 @@ export default function PublicQueuePage({ params }: PageProps) {
 
       {/* Footer */}
       <footer className="px-4 py-4 border-t border-[var(--border-default)] text-center">
-        <p className="text-xs text-[var(--text-muted)]">Powered by <span className="gradient-text font-semibold">QueueBareng</span></p>
+        <p className="text-xs text-[var(--text-muted)]">Powered by <span className="gradient-text font-semibold">RedLine</span></p>
       </footer>
     </div>
   );

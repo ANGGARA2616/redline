@@ -106,7 +106,7 @@ export default function DashboardLayout({
             >
               <Gamepad2 className="w-6 h-6 text-[var(--qb-primary)]" />
               <span className="text-lg font-bold gradient-text hidden sm:inline">
-                QueueBareng
+                RedLine
               </span>
             </Link>
 

@@ -19,8 +19,8 @@ const jetBrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "QueueBareng — Manajemen Antrian Main Bareng ML",
-    template: "%s | QueueBareng",
+    default: "RedLine — Manajemen Antrian Main Bareng ML",
+    template: "%s | RedLine",
   },
   description:
     "Platform SaaS untuk live streamer Mobile Legends mengelola antrian main bareng secara real-time, otomatis, dan anti-dispute.",

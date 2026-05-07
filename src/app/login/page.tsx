@@ -76,7 +76,7 @@ export default function LoginPage() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--qb-primary)] to-[var(--qb-accent)] flex items-center justify-center shadow-[0_0_20px_rgba(108,92,231,0.4)] group-hover:shadow-[0_0_30px_rgba(108,92,231,0.6)] transition-shadow">
               <Gamepad2 className="w-5 h-5 text-white" />
             </div>
-            <span className="text-2xl font-bold gradient-text">QueueBareng</span>
+            <span className="text-2xl font-bold gradient-text">RedLine</span>
           </Link>
           <p className="text-[var(--text-secondary)] mt-3 text-sm">Masuk ke dashboard streamer kamu</p>
         </div>
