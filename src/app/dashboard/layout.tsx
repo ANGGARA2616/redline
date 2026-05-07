@@ -19,7 +19,7 @@ export default function DashboardLayout({
   // Auth guard
   useEffect(() => {
     if (!loading && !user) {
-      router.replace("/login");
+      router.replace("/");
     }
   }, [loading, user, router]);
 

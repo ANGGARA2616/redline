@@ -45,7 +45,7 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'lp-nav' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="flex items-center gap-2 group">
             <div className="relative">
               <Gamepad2 className="w-7 h-7 lp-cyan-text" />
               <div className="absolute inset-0 blur-md opacity-60">
@@ -193,7 +193,7 @@ export default function LandingPage() {
         <div className="lp-divider max-w-5xl mx-auto" />
 
         {/* ── Features ── */}
-        <section className="py-16 px-6 relative">
+        <section className="py-16 px-6 relative" id="features">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <div className="inline-block px-3 py-1 mb-4 text-xs font-bold tracking-widest uppercase lp-cyan-text border border-[rgba(0,245,255,0.3)] rounded-full">
@@ -228,7 +228,7 @@ export default function LandingPage() {
         </section>
 
         {/* ── How it works ── */}
-        <section className="py-16 px-6 relative">
+        <section className="py-16 px-6 relative" id="how">
           <div
             className="absolute inset-0 opacity-30"
             style={{
