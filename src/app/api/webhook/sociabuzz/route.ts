@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Extract ML ID from message ──
-    const mlIdMatch = message.trim().match(/^(\d+)/);
+    const mlIdMatch = message.trim().match(/(\d+)/);
     if (!mlIdMatch) {
       return NextResponse.json(
         {
