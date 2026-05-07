@@ -7,30 +7,16 @@ import { Timestamp } from "firebase-admin/firestore";
 /**
  * POST /api/webhook/sociabuzz?username=<streamer_username>
  *
- * Receives donation notifications from Sociabuzz and automatically
- * adds entries to the streamer's active queue session.
- *
- * Entry HANYA dibuat jika semua kondisi terpenuhi:
- *   1. Currency adalah IDR
- *   2. Pesan mengandung ML ID (angka)
- *   3. Nominal cocok dengan salah satu paket streamer
- *
- * Jika salah satu kondisi tidak terpenuhi → return 200 OK dengan
- * { skipped: true, reason: "..." } agar Sociabuzz tidak retry.
- *
- * ──────────────────────────────────────────────
- * Query param:
- *   ?username=jessnolimit
- *
- * Expected request body (Sociabuzz format):
- * {
- *   "amount": 10000,
- *   "currency": "IDR",
- *   "supporter": "Budi",
- *   "message": "166047234 gas kak mau bareng",
- *   ... (fields lain dari Sociabuzz diabaikan)
- * }
- * ──────────────────────────────────────────────
+ * Urutan pengecekan (penting — tier dicek lebih awal agar tidak bisa dibypass):
+ *   1. Query param username ada
+ *   2. Body valid (amount + message)
+ *   3. Streamer ditemukan di Firestore
+ *   4. Tier streamer adalah Pro atau Pro+ (gate utama)
+ *   5. Currency IDR
+ *   6. Pesan mengandung ML ID
+ *   7. Sesi aktif tersedia
+ *   8. Nominal cocok dengan paket
+ *   9. Buat queue entry
  */
 export async function POST(request: NextRequest) {
   try {
@@ -67,12 +53,42 @@ export async function POST(request: NextRequest) {
     const donor_name = (body["supporter"] as string) || "Anonymous";
     const message = body["message"] as string;
 
-    // ── Validate required fields ──
     if (!nominal_raw || !message) {
       return NextResponse.json(
         { error: "Missing required fields: amount, message" },
         { status: 400 }
       );
+    }
+
+    // ── Look up streamer (dilakukan lebih awal agar tier bisa dicek) ──
+    const slug = streamer_username.toLowerCase();
+    const usernameSnap = await adminDb.collection("usernames").doc(slug).get();
+
+    if (!usernameSnap.exists) {
+      return NextResponse.json(
+        { error: `Streamer "${streamer_username}" not found` },
+        { status: 404 }
+      );
+    }
+
+    const streamerId = usernameSnap.data()!.uid;
+
+    // ── Get streamer profile ──
+    const userSnap = await adminDb.collection("users").doc(streamerId).get();
+    let packages: Package[] = [];
+
+    if (userSnap.exists) {
+      const userData = userSnap.data()!;
+      packages = (userData.packages || []) as Package[];
+
+      // ── Gate: webhook hanya untuk Pro dan Pro+ ──
+      const tier: string = userData.subscription?.tier ?? "expired";
+      if (tier !== "pro" && tier !== "pro_plus" && tier !== "trial") {
+        return NextResponse.json(
+          { error: "Fitur webhook tidak tersedia pada paket ini. Upgrade ke Pro untuk mengaktifkan." },
+          { status: 403 }
+        );
+      }
     }
 
     // ── Skip non-IDR currency ──
@@ -101,19 +117,6 @@ export async function POST(request: NextRequest) {
     }
     const mlId = mlIdMatch[1];
 
-    // ── Look up streamer via Admin SDK ──
-    const slug = streamer_username.toLowerCase();
-    const usernameSnap = await adminDb.collection("usernames").doc(slug).get();
-
-    if (!usernameSnap.exists) {
-      return NextResponse.json(
-        { error: `Streamer "${streamer_username}" not found` },
-        { status: 404 }
-      );
-    }
-
-    const streamerId = usernameSnap.data()!.uid;
-
     // ── Find active session ──
     const sessSnap = await adminDb
       .collection("sessions")
@@ -131,28 +134,9 @@ export async function POST(request: NextRequest) {
 
     const sessionId = sessSnap.docs[0].id;
 
-    // ── Get streamer profile (packages + subscription) ──
-    const userSnap = await adminDb.collection("users").doc(streamerId).get();
-    let packages: Package[] = [];
-
-    if (userSnap.exists) {
-      const userData = userSnap.data()!;
-      packages = (userData.packages || []) as Package[];
-
-      // ── Gate: webhook hanya untuk Pro dan Pro+ ──
-      const tier: string = userData.subscription?.tier ?? "expired";
-      if (tier === "starter" || tier === "expired") {
-        return NextResponse.json({
-          skipped: true,
-          reason: `Tier ${tier} tidak mendukung webhook otomatis. Upgrade ke Pro untuk mengaktifkan fitur ini.`,
-        });
-      }
-    }
-
     // ── Auto-detect package from nominal ──
     const detectResult = autoDetectPackage(nominal, packages);
 
-    // ── Skip jika nominal tidak cocok paket manapun ──
     if (!detectResult.matched) {
       return NextResponse.json({
         skipped: true,
