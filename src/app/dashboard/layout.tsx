@@ -105,7 +105,7 @@ export default function DashboardLayout({
               className="flex items-center gap-2 shrink-0"
             >
               <Gamepad2 className="w-6 h-6 text-[var(--qb-primary)]" />
-              <span className="text-lg font-bold gradient-text hidden sm:inline">
+              <span className="text-lg font-bold lp-gradient-text hidden sm:inline">
                 RedLine
               </span>
             </Link>
