@@ -131,12 +131,22 @@ export async function POST(request: NextRequest) {
 
     const sessionId = sessSnap.docs[0].id;
 
-    // ── Get streamer's packages for auto-detect ──
+    // ── Get streamer profile (packages + subscription) ──
     const userSnap = await adminDb.collection("users").doc(streamerId).get();
     let packages: Package[] = [];
 
     if (userSnap.exists) {
-      packages = (userSnap.data()!.packages || []) as Package[];
+      const userData = userSnap.data()!;
+      packages = (userData.packages || []) as Package[];
+
+      // ── Gate: webhook hanya untuk Pro dan Pro+ ──
+      const tier: string = userData.subscription?.tier ?? "expired";
+      if (tier === "starter" || tier === "expired") {
+        return NextResponse.json({
+          skipped: true,
+          reason: `Tier ${tier} tidak mendukung webhook otomatis. Upgrade ke Pro untuk mengaktifkan fitur ini.`,
+        });
+      }
     }
 
     // ── Auto-detect package from nominal ──

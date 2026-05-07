@@ -7,8 +7,9 @@ import { useQueue, MAX_SLOTS } from "@/hooks/useQueue";
 import QueueCard from "@/components/dashboard/QueueCard";
 import InputOrderForm from "@/components/dashboard/InputOrderForm";
 import GameControlPanel from "@/components/dashboard/GameControlPanel";
-import { Gamepad2, CheckCircle, Clapperboard, Play, Link, Square, SkipForward, Zap, ClipboardList, Moon, Monitor, Webhook, Check } from "lucide-react";
+import { Gamepad2, CheckCircle, Clapperboard, Play, Link, Square, SkipForward, Zap, ClipboardList, Moon, Monitor, Webhook, Check, Lock, AlertTriangle } from "lucide-react";
 import type { Jalur } from "@/types";
+import { getPlanLimits } from "@/lib/planLimits";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -35,6 +36,10 @@ export default function DashboardPage() {
   const sociabuzzWebhookUrl = user
     ? `${typeof window !== "undefined" ? window.location.origin : ""}/api/webhook/sociabuzz?username=${user.username}`
     : null;
+
+  const planLimits = getPlanLimits((user?.subscription?.tier as any) ?? "expired");
+  const totalActiveEntries = fastTrackQueue.length + normalQueue.length + playingEntries.length;
+  const isQueueFull = planLimits.maxQueuePerSession !== null && totalActiveEntries >= planLimits.maxQueuePerSession;
 
   const [copied, setCopied] = useState<"link" | "obs" | "webhook" | null>(null);
 
@@ -165,16 +170,28 @@ export default function DashboardPage() {
               {copied === "link" ? "Tersalin!" : "Halaman Publik"}
             </button>
           )}
-          {obsOverlayUrl && (
-            <button onClick={copyObs} className={`btn btn-sm transition-colors ${copied === "obs" ? "btn-success" : "btn-secondary"}`} title="Salin URL OBS Overlay">
-              {copied === "obs" ? <Check className="w-4 h-4 inline mr-1" /> : <Monitor className="w-4 h-4 inline mr-1" />}
-              {copied === "obs" ? "Tersalin!" : "OBS"}
+          {planLimits.obsOverlayEnabled ? (
+            obsOverlayUrl && (
+              <button onClick={copyObs} className={`btn btn-sm transition-colors ${copied === "obs" ? "btn-success" : "btn-secondary"}`} title="Salin URL OBS Overlay">
+                {copied === "obs" ? <Check className="w-4 h-4 inline mr-1" /> : <Monitor className="w-4 h-4 inline mr-1" />}
+                {copied === "obs" ? "Tersalin!" : "OBS"}
+              </button>
+            )
+          ) : (
+            <button disabled className="btn btn-secondary btn-sm opacity-50 cursor-not-allowed" title="OBS Overlay tersedia di Pro+">
+              <Lock className="w-3 h-3 inline mr-1" /> OBS
             </button>
           )}
-          {sociabuzzWebhookUrl && (
-            <button onClick={copySociabuzz} className={`btn btn-sm transition-colors ${copied === "webhook" ? "btn-success" : "btn-secondary"}`} title="Salin URL Webhook Sociabuzz">
-              {copied === "webhook" ? <Check className="w-4 h-4 inline mr-1" /> : <Webhook className="w-4 h-4 inline mr-1" />}
-              {copied === "webhook" ? "Tersalin!" : "Webhook"}
+          {planLimits.webhookEnabled ? (
+            sociabuzzWebhookUrl && (
+              <button onClick={copySociabuzz} className={`btn btn-sm transition-colors ${copied === "webhook" ? "btn-success" : "btn-secondary"}`} title="Salin URL Webhook Sociabuzz">
+                {copied === "webhook" ? <Check className="w-4 h-4 inline mr-1" /> : <Webhook className="w-4 h-4 inline mr-1" />}
+                {copied === "webhook" ? "Tersalin!" : "Webhook"}
+              </button>
+            )
+          ) : (
+            <button disabled className="btn btn-secondary btn-sm opacity-50 cursor-not-allowed" title="Webhook Sociabuzz tersedia di Pro">
+              <Lock className="w-3 h-3 inline mr-1" /> Webhook
             </button>
           )}
           <button onClick={() => setShowEndConfirm(true)} className="btn btn-danger btn-sm" disabled={operating}>
@@ -186,14 +203,31 @@ export default function DashboardPage() {
       <div className="grid lg:grid-cols-[320px_1fr] gap-5">
         {/* Sidebar */}
         <div className="space-y-4">
-          <InputOrderForm
-            packages={user?.packages || []}
-            allEntries={allEntries}
-            onSubmitOrder={handleSubmitOrder}
-            onAddGames={addGamesToEntry}
-            onUpgrade={upgradeToFastTrack}
-            onRecalculate={recalculateEntry}
-          />
+          {isQueueFull ? (
+            <div className="card border-[rgba(255,107,107,0.3)] bg-[rgba(255,107,107,0.06)] space-y-3">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="w-5 h-5 text-[var(--qb-danger)] shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-sm">Batas antrian tercapai</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-0.5">
+                    Paket {user?.subscription?.tier === "starter" ? "Starter" : "kamu"} maksimal {planLimits.maxQueuePerSession} antrian per sesi.
+                  </p>
+                </div>
+              </div>
+              <a href="/pricing" className="btn btn-primary btn-sm w-full text-center">
+                Upgrade untuk tambah lebih banyak
+              </a>
+            </div>
+          ) : (
+            <InputOrderForm
+              packages={user?.packages || []}
+              allEntries={allEntries}
+              onSubmitOrder={handleSubmitOrder}
+              onAddGames={addGamesToEntry}
+              onUpgrade={upgradeToFastTrack}
+              onRecalculate={recalculateEntry}
+            />
+          )}
           <div className="grid grid-cols-3 gap-2">
             <div className="card py-2 px-3 text-center">
               <p className="text-lg font-bold text-[var(--qb-fast-track)]">{fastTrackQueue.length}</p>

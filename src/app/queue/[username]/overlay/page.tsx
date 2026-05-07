@@ -14,6 +14,7 @@ export default function OBSOverlayPage({ params }: PageProps) {
   const { username } = use(params);
   const [streamerName, setStreamerName] = useState<string | null>(null);
   const [streamerId, setStreamerId] = useState<string | null>(null);
+  const [obsAllowed, setObsAllowed] = useState<boolean | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [entries, setEntries] = useState<QueueEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,15 +36,31 @@ export default function OBSOverlayPage({ params }: PageProps) {
     const slug = username.toLowerCase();
     const ref = doc(getFirebaseDb(), "usernames", slug);
 
-    getDoc(ref).then((snap) => {
+    getDoc(ref).then(async (snap) => {
       if (!snap.exists()) {
+        setObsAllowed(false);
         setLoading(false);
         return;
       }
       const data = snap.data();
       setStreamerName(data.displayName || slug);
-      setStreamerId(data.uid);
+      const uid = data.uid;
+      setStreamerId(uid);
+
+      // ── Cek apakah streamer punya akses OBS (Pro+ atau Trial) ──
+      try {
+        const userSnap = await getDoc(doc(getFirebaseDb(), "users", uid));
+        if (userSnap.exists()) {
+          const tier: string = userSnap.data().subscription?.tier ?? "expired";
+          setObsAllowed(tier === "trial" || tier === "pro_plus");
+        } else {
+          setObsAllowed(false);
+        }
+      } catch {
+        setObsAllowed(false);
+      }
     }).catch(() => {
+      setObsAllowed(false);
       setLoading(false);
     });
   }, [username]);
@@ -91,8 +108,12 @@ export default function OBSOverlayPage({ params }: PageProps) {
   const normal = entries.filter((e) => e.jalur === "normal" && e.status === "waiting");
   const playingEntries = entries.filter((e) => e.status === "playing");
 
-  if (loading) {
+  if (loading || obsAllowed === null) {
     return <div className="obs-overlay obs-overlay--loading"><Gamepad2 className="w-6 h-6 animate-pulse" /></div>;
+  }
+
+  if (!obsAllowed) {
+    return <div style={{ background: "transparent" }} />;
   }
 
   if (!session || !streamerName) {
