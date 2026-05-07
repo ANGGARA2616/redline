@@ -10,7 +10,13 @@ import { Timestamp } from "firebase-admin/firestore";
  * Receives donation notifications from Sociabuzz and automatically
  * adds entries to the streamer's active queue session.
  *
- * Uses Firebase Admin SDK (server-side) to bypass security rules.
+ * Entry HANYA dibuat jika semua kondisi terpenuhi:
+ *   1. Currency adalah IDR
+ *   2. Pesan mengandung ML ID (angka)
+ *   3. Nominal cocok dengan salah satu paket streamer
+ *
+ * Jika salah satu kondisi tidak terpenuhi → return 200 OK dengan
+ * { skipped: true, reason: "..." } agar Sociabuzz tidak retry.
  *
  * ──────────────────────────────────────────────
  * Query param:
@@ -19,6 +25,7 @@ import { Timestamp } from "firebase-admin/firestore";
  * Expected request body (Sociabuzz format):
  * {
  *   "amount": 10000,
+ *   "currency": "IDR",
  *   "supporter": "Budi",
  *   "message": "166047234 gas kak mau bareng",
  *   ... (fields lain dari Sociabuzz diabaikan)
@@ -38,7 +45,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Parse body (JSON or form-urlencoded) ──
-    let body: Record<string, string> = {};
+    let body: Record<string, unknown> = {};
     const contentType = request.headers.get("content-type") || "";
 
     if (contentType.includes("application/json")) {
@@ -47,7 +54,6 @@ export async function POST(request: NextRequest) {
       const formData = await request.formData();
       formData.forEach((value, key) => { body[key] = value.toString(); });
     } else {
-      // fallback: coba JSON dulu, kalau gagal coba form
       try {
         body = await request.json();
       } catch {
@@ -57,6 +63,7 @@ export async function POST(request: NextRequest) {
     }
 
     const nominal_raw = body["amount"];
+    const currency = (body["currency"] as string) || "IDR";
     const donor_name = (body["supporter"] as string) || "Anonymous";
     const message = body["message"] as string;
 
@@ -68,6 +75,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // ── Skip non-IDR currency ──
+    if (currency.toUpperCase() !== "IDR") {
+      return NextResponse.json({
+        skipped: true,
+        reason: `Currency ${currency} bukan IDR, tidak diproses`,
+      });
+    }
+
     const nominal = Number(nominal_raw);
     if (isNaN(nominal) || nominal <= 0) {
       return NextResponse.json(
@@ -76,9 +91,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Extract ML ID from message (opsional) ──
+    // ── Skip jika tidak ada ML ID di pesan ──
     const mlIdMatch = message.trim().match(/(\d+)/);
-    const mlId = mlIdMatch ? mlIdMatch[1] : null;
+    if (!mlIdMatch) {
+      return NextResponse.json({
+        skipped: true,
+        reason: "Pesan tidak mengandung ML ID",
+      });
+    }
+    const mlId = mlIdMatch[1];
 
     // ── Look up streamer via Admin SDK ──
     const slug = streamer_username.toLowerCase();
@@ -121,15 +142,16 @@ export async function POST(request: NextRequest) {
     // ── Auto-detect package from nominal ──
     const detectResult = autoDetectPackage(nominal, packages);
 
-    let jalur: Jalur = detectResult.jalur;
-    let totalGames = detectResult.gameCount;
-    let approvalType: "auto" | "manual" = "auto";
-
-    if (!detectResult.matched || !mlId) {
-      jalur = "normal";
-      totalGames = 1;
-      approvalType = "manual";
+    // ── Skip jika nominal tidak cocok paket manapun ──
+    if (!detectResult.matched) {
+      return NextResponse.json({
+        skipped: true,
+        reason: `Nominal Rp ${nominal.toLocaleString("id-ID")} tidak cocok dengan paket manapun`,
+      });
     }
+
+    const jalur: Jalur = detectResult.jalur;
+    const totalGames = detectResult.gameCount;
 
     // ── Create queue entry ──
     const now = Timestamp.now();
@@ -145,7 +167,7 @@ export async function POST(request: NextRequest) {
       createdAt: now,
       orderedAt: now,
       isCarryOver: false,
-      approvalType,
+      approvalType: "auto",
       nominalDonasi: nominal,
     });
 
@@ -155,11 +177,8 @@ export async function POST(request: NextRequest) {
       mlId,
       jalur,
       totalGames,
-      approvalType,
-      detected: detectResult.matched
-        ? `Auto-detected: ${totalGames} game ${jalur === "fast_track" ? "Fast Track" : "Normal"}`
-        : `Anomaly: nominal Rp ${nominal.toLocaleString("id-ID")} tidak cocok dengan paket manapun. Ditambahkan sebagai 1 game Normal (manual review).`,
       donor_name,
+      detected: `Auto-detected: ${totalGames} game ${jalur === "fast_track" ? "Fast Track" : "Normal"}`,
     });
   } catch (error) {
     console.error("Sociabuzz webhook error:", error);
