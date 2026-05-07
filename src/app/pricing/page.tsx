@@ -175,9 +175,7 @@ export default function PricingPage() {
           </p>
         </div>
 
-        {/* Cards — pakai landing-theme agar lp-* CSS variables tersedia, pt-6 untuk ruang badge "Paling Laris" */}
-        <div className="landing-theme grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-center pt-6"
-          style={{ background: "transparent", color: "inherit" }}>
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto items-center pt-6">
           {TIERS.map((tier) => {
             const isCurrentTier = user?.subscription?.tier === tier.id;
             return (
