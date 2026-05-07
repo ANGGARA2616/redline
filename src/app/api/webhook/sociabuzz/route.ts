@@ -36,7 +36,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    // ── Parse body (JSON or form-urlencoded) ──
+    let body: Record<string, string> = {};
+    const contentType = request.headers.get("content-type") || "";
+
+    if (contentType.includes("application/json")) {
+      body = await request.json();
+    } else if (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      formData.forEach((value, key) => { body[key] = value.toString(); });
+    } else {
+      // fallback: coba JSON dulu, kalau gagal coba form
+      try {
+        body = await request.json();
+      } catch {
+        const formData = await request.formData();
+        formData.forEach((value, key) => { body[key] = value.toString(); });
+      }
+    }
 
     const nominal_raw = body["nominal"];
     const donor_name = body["Nama Pendukung"] || "Anonymous";
@@ -45,7 +62,12 @@ export async function POST(request: NextRequest) {
     // ── Validate required fields ──
     if (!nominal_raw || !message) {
       return NextResponse.json(
-        { error: "Missing required fields: nominal, Pesan dari Pendukung" },
+        {
+          error: "Missing required fields: nominal, Pesan dari Pendukung",
+          received_fields: Object.keys(body),
+          received_body: body,
+          content_type: contentType,
+        },
         { status: 400 }
       );
     }
