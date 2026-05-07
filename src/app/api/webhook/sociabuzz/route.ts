@@ -76,18 +76,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // ── Extract ML ID from message ──
+    // ── Extract ML ID from message (opsional) ──
     const mlIdMatch = message.trim().match(/(\d+)/);
-    if (!mlIdMatch) {
-      return NextResponse.json(
-        {
-          error: "Could not extract ML ID from message. Message must start with a numeric ML ID.",
-          message_received: message,
-        },
-        { status: 400 }
-      );
-    }
-    const mlId = mlIdMatch[1];
+    const mlId = mlIdMatch ? mlIdMatch[1] : null;
 
     // ── Look up streamer via Admin SDK ──
     const slug = streamer_username.toLowerCase();
@@ -134,7 +125,7 @@ export async function POST(request: NextRequest) {
     let totalGames = detectResult.gameCount;
     let approvalType: "auto" | "manual" = "auto";
 
-    if (!detectResult.matched) {
+    if (!detectResult.matched || !mlId) {
       jalur = "normal";
       totalGames = 1;
       approvalType = "manual";
