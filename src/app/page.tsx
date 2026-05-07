@@ -127,14 +127,13 @@ export default function LandingPage() {
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.08] mb-5 tracking-tight">
-                Antrian Mabar
+                Antrian Mabar Berantakan?
                 <br />
-                Rasa{" "}
-                <span className="lp-gradient-text">Esports.</span>
+                <span className="lp-gradient-text">Bukan Urusanmu Lagi.</span>
               </h1>
 
               <p className="text-base sm:text-lg text-[var(--lp-text-dim)] max-w-xl mb-8 leading-relaxed lg:mx-0 mx-auto">
-                Auto-detect nominal donasi, antrian real-time dual-lane, dan game log anti-dispute. Satu dashboard untuk semua chaos saat live streaming Mobile Legends.
+                RedLine otomatis baca donasi Sociabuzz, atur antrian dual-lane, dan catat setiap game. Kamu tinggal main.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-10 lg:mb-0">
@@ -147,20 +146,6 @@ export default function LandingPage() {
                 </Link>
               </div>
 
-              <div className="lp-hero-meta justify-center lg:justify-start">
-                <div className="stat">
-                  <strong><em>312</em></strong>
-                  Streamer aktif
-                </div>
-                <div className="stat">
-                  <strong><em>4.2K</em></strong>
-                  Antrian / hari
-                </div>
-                <div className="stat">
-                  <strong><em>0</em></strong>
-                  Dispute bulan ini
-                </div>
-              </div>
             </div>
 
             {/* Right column - Dashboard Preview */}
