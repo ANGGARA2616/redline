@@ -7,7 +7,7 @@ import { useQueue, MAX_SLOTS } from "@/hooks/useQueue";
 import QueueCard from "@/components/dashboard/QueueCard";
 import InputOrderForm from "@/components/dashboard/InputOrderForm";
 import GameControlPanel from "@/components/dashboard/GameControlPanel";
-import { Gamepad2, CheckCircle, Clapperboard, Play, Link, Square, SkipForward, Zap, ClipboardList, Moon, Monitor, Webhook } from "lucide-react";
+import { Gamepad2, CheckCircle, Clapperboard, Play, Link, Square, SkipForward, Zap, ClipboardList, Moon, Monitor, Webhook, Check } from "lucide-react";
 import type { Jalur } from "@/types";
 
 export default function DashboardPage() {
@@ -33,19 +33,33 @@ export default function DashboardPage() {
     : null;
 
   const sociabuzzWebhookUrl = user
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/api/webhook/sociabuzz`
+    ? `${typeof window !== "undefined" ? window.location.origin : ""}/api/webhook/sociabuzz?username=${user.username}`
     : null;
 
+  const [copied, setCopied] = useState<"link" | "obs" | "webhook" | null>(null);
+
   const copyLink = useCallback(() => {
-    if (publicQueueUrl) navigator.clipboard.writeText(publicQueueUrl);
+    if (publicQueueUrl) {
+      navigator.clipboard.writeText(publicQueueUrl);
+      setCopied("link");
+      setTimeout(() => setCopied(null), 2000);
+    }
   }, [publicQueueUrl]);
 
   const copyObs = useCallback(() => {
-    if (obsOverlayUrl) navigator.clipboard.writeText(obsOverlayUrl);
+    if (obsOverlayUrl) {
+      navigator.clipboard.writeText(obsOverlayUrl);
+      setCopied("obs");
+      setTimeout(() => setCopied(null), 2000);
+    }
   }, [obsOverlayUrl]);
 
   const copySociabuzz = useCallback(() => {
-    if (sociabuzzWebhookUrl) navigator.clipboard.writeText(sociabuzzWebhookUrl);
+    if (sociabuzzWebhookUrl) {
+      navigator.clipboard.writeText(sociabuzzWebhookUrl);
+      setCopied("webhook");
+      setTimeout(() => setCopied(null), 2000);
+    }
   }, [sociabuzzWebhookUrl]);
 
   const handleSubmitOrder = useCallback(
@@ -146,13 +160,22 @@ export default function DashboardPage() {
         </div>
         <div className="flex items-center gap-2">
           {publicQueueUrl && (
-            <button onClick={copyLink} className="btn btn-secondary btn-sm"><Link className="w-4 h-4 inline mr-1" /> Salin Link</button>
+            <button onClick={copyLink} className={`btn btn-sm transition-colors ${copied === "link" ? "btn-success" : "btn-secondary"}`}>
+              {copied === "link" ? <Check className="w-4 h-4 inline mr-1" /> : <Link className="w-4 h-4 inline mr-1" />}
+              {copied === "link" ? "Tersalin!" : "Halaman Publik"}
+            </button>
           )}
           {obsOverlayUrl && (
-            <button onClick={copyObs} className="btn btn-secondary btn-sm" title="Salin URL OBS Overlay"><Monitor className="w-4 h-4 inline mr-1" /> OBS</button>
+            <button onClick={copyObs} className={`btn btn-sm transition-colors ${copied === "obs" ? "btn-success" : "btn-secondary"}`} title="Salin URL OBS Overlay">
+              {copied === "obs" ? <Check className="w-4 h-4 inline mr-1" /> : <Monitor className="w-4 h-4 inline mr-1" />}
+              {copied === "obs" ? "Tersalin!" : "OBS"}
+            </button>
           )}
           {sociabuzzWebhookUrl && (
-            <button onClick={copySociabuzz} className="btn btn-secondary btn-sm" title="Salin URL Webhook Sociabuzz"><Webhook className="w-4 h-4 inline mr-1" /> Webhook</button>
+            <button onClick={copySociabuzz} className={`btn btn-sm transition-colors ${copied === "webhook" ? "btn-success" : "btn-secondary"}`} title="Salin URL Webhook Sociabuzz">
+              {copied === "webhook" ? <Check className="w-4 h-4 inline mr-1" /> : <Webhook className="w-4 h-4 inline mr-1" />}
+              {copied === "webhook" ? "Tersalin!" : "Webhook"}
+            </button>
           )}
           <button onClick={() => setShowEndConfirm(true)} className="btn btn-danger btn-sm" disabled={operating}>
             <Square className="w-4 h-4 inline mr-1" /> Akhiri Sesi
