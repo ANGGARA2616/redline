@@ -4,6 +4,7 @@ import { useState, useEffect, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
+import { Gamepad2, ArrowLeft, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,7 +17,7 @@ export default function LoginPage() {
   const [tierParam, setTierParam] = useState<string | null>(null);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
       setTierParam(params.get("tier"));
     }
@@ -26,7 +27,6 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-
     try {
       await login(email, password);
       if (tierParam) {
@@ -35,13 +35,8 @@ export default function LoginPage() {
         router.push("/dashboard");
       }
     } catch (err: unknown) {
-      const msg =
-        err instanceof Error ? err.message : "Terjadi kesalahan.";
-      if (
-        msg.includes("user-not-found") ||
-        msg.includes("wrong-password") ||
-        msg.includes("invalid-credential")
-      ) {
+      const msg = err instanceof Error ? err.message : "Terjadi kesalahan.";
+      if (msg.includes("user-not-found") || msg.includes("wrong-password") || msg.includes("invalid-credential")) {
         setError("Email atau password salah.");
       } else if (msg.includes("too-many-requests")) {
         setError("Terlalu banyak percobaan. Coba lagi nanti.");
@@ -54,47 +49,43 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      {/* Background glow */}
-      <div
-        className="fixed top-0 left-1/2 -translate-x-1/2 w-[500px] h-[500px] rounded-full opacity-15 blur-[100px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, var(--qb-accent), transparent)",
-        }}
-      />
+    <div className="min-h-screen flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute -top-20 -right-20 w-[500px] h-[500px] rounded-full opacity-[0.12] blur-[120px]"
+          style={{ background: "var(--qb-primary)" }} />
+        <div className="absolute -bottom-20 -left-20 w-[450px] h-[450px] rounded-full opacity-[0.10] blur-[120px]"
+          style={{ background: "var(--qb-accent)" }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] rounded-full opacity-[0.04] blur-[80px]"
+          style={{ background: "var(--qb-primary-light)" }} />
+      </div>
 
-      {/* Back to Home Button */}
+      {/* Back button */}
       <Link
         href="/"
-        className="absolute top-6 left-6 flex items-center gap-2 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors z-20"
+        className="absolute top-6 left-6 flex items-center gap-1.5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors z-20 text-sm font-medium"
       >
-        <span className="text-lg">←</span>
-        <span className="text-sm font-medium">Kembali</span>
+        <ArrowLeft className="w-4 h-4" />
+        Kembali
       </Link>
 
       <div className="w-full max-w-md relative z-10 animate-slide-up">
         {/* Logo */}
         <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-2">
-            <span className="text-3xl">🎮</span>
-            <span className="text-2xl font-bold gradient-text">
-              QueueBareng
-            </span>
+          <Link href="/" className="inline-flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--qb-primary)] to-[var(--qb-accent)] flex items-center justify-center shadow-[0_0_20px_rgba(108,92,231,0.4)] group-hover:shadow-[0_0_30px_rgba(108,92,231,0.6)] transition-shadow">
+              <Gamepad2 className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-2xl font-bold gradient-text">QueueBareng</span>
           </Link>
-          <p className="text-[var(--text-secondary)] mt-2">
-            Masuk ke dashboard streamer
-          </p>
+          <p className="text-[var(--text-secondary)] mt-3 text-sm">Masuk ke dashboard streamer kamu</p>
         </div>
 
         {/* Card */}
-        <div className="card">
+        <div className="card shadow-[var(--shadow-lg)]">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
             <div>
-              <label htmlFor="email" className="label">
-                Email
-              </label>
+              <label htmlFor="email" className="label">Email</label>
               <input
                 id="email"
                 type="email"
@@ -107,11 +98,8 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Password */}
             <div>
-              <label htmlFor="password" className="label">
-                Password
-              </label>
+              <label htmlFor="password" className="label">Password</label>
               <input
                 id="password"
                 type="password"
@@ -123,54 +111,26 @@ export default function LoginPage() {
               />
             </div>
 
-            {/* Error */}
             {error && (
               <div className="text-sm text-[var(--qb-danger)] bg-[rgba(255,107,107,0.1)] border border-[rgba(255,107,107,0.2)] rounded-[var(--radius-md)] px-4 py-3">
                 {error}
               </div>
             )}
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="btn btn-primary w-full btn-lg"
-              disabled={loading}
-            >
+            <button type="submit" className="btn btn-primary w-full btn-lg" disabled={loading}>
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <svg
-                    className="animate-spin h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    />
-                  </svg>
-                  Masuk...
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Masuk...
                 </span>
-              ) : (
-                "Masuk"
-              )}
+              ) : "Masuk"}
             </button>
           </form>
 
-          {/* Footer */}
           <div className="mt-6 pt-5 border-t border-[var(--border-default)] text-center">
             <p className="text-sm text-[var(--text-secondary)]">
               Belum punya akun?{" "}
               <Link
-                href={`/register${tierParam ? `?tier=${tierParam}` : ''}`}
+                href={`/register${tierParam ? `?tier=${tierParam}` : ""}`}
                 className="text-[var(--qb-primary-light)] hover:underline font-medium"
               >
                 Daftar gratis
@@ -178,6 +138,10 @@ export default function LoginPage() {
             </p>
           </div>
         </div>
+
+        <p className="text-xs text-[var(--text-muted)] text-center mt-5">
+          ✨ Free trial 7 hari untuk akun baru. Tanpa kartu kredit.
+        </p>
       </div>
     </div>
   );

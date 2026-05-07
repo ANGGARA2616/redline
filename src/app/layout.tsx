@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
-import { Poppins, DM_Sans } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-const poppins = Poppins({
-  weight: ["400", "500", "600", "700", "800", "900"],
+const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
-  variable: "--font-poppins",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-space-grotesk",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-dm-sans",
+  variable: "--font-jetbrains-mono",
   display: "swap",
 });
 
@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className={`h-full antialiased ${poppins.variable} ${dmSans.variable}`}>
-      <body className="min-h-full flex flex-col font-sans">
+    <html lang="id" className={`h-full antialiased ${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
+      <body className="min-h-full flex flex-col">
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

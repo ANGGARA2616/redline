@@ -184,8 +184,15 @@ export default function PricingPage() {
         strategy="lazyOnload"
       />
 
-      {/* Background Decor */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-96 bg-[var(--qb-primary)] opacity-[0.05] blur-[100px] rounded-full pointer-events-none" />
+      {/* Ambient orbs */}
+      <div className="fixed inset-0 pointer-events-none" aria-hidden>
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[400px] rounded-full opacity-[0.07] blur-[120px]"
+          style={{ background: "var(--qb-primary)" }} />
+        <div className="absolute bottom-0 -left-32 w-[400px] h-[400px] rounded-full opacity-[0.06] blur-[100px]"
+          style={{ background: "var(--qb-accent)" }} />
+        <div className="absolute bottom-0 -right-32 w-[400px] h-[400px] rounded-full opacity-[0.06] blur-[100px]"
+          style={{ background: "var(--qb-fast-track)" }} />
+      </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
         <button

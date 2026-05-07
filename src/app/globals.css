@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ============================================================
@@ -92,7 +91,7 @@
 body {
   background: var(--bg-base);
   color: var(--text-primary);
-  font-family: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
   font-feature-settings: "ss01", "ss02";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -542,7 +541,7 @@ body {
 }
 
 .obs-entry__mlid {
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-family: var(--font-jetbrains-mono), "Fira Code", monospace;
   font-weight: 600;
   flex: 1;
 }
@@ -579,8 +578,8 @@ body {
   --lp-text-dim: rgba(255, 255, 255, 0.65);
   --lp-text-muted: rgba(255, 255, 255, 0.4);
   --lp-border: rgba(255, 255, 255, 0.08);
-  --lp-sans: 'Space Grotesk', system-ui, sans-serif;
-  --lp-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --lp-sans: var(--font-space-grotesk), system-ui, sans-serif;
+  --lp-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 
   background: var(--lp-bg);
   color: var(--lp-text);
