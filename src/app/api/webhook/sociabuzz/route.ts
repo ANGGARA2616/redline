@@ -18,9 +18,10 @@ import { Timestamp } from "firebase-admin/firestore";
  *
  * Expected request body (Sociabuzz format):
  * {
- *   "nominal": 51000,
- *   "Nama Pendukung": "Budi",
- *   "Pesan dari Pendukung": "166047234 gas kak mau bareng"
+ *   "amount": 10000,
+ *   "supporter": "Budi",
+ *   "message": "166047234 gas kak mau bareng",
+ *   ... (fields lain dari Sociabuzz diabaikan)
  * }
  * ──────────────────────────────────────────────
  */
@@ -55,19 +56,14 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const nominal_raw = body["nominal"];
-    const donor_name = body["Nama Pendukung"] || "Anonymous";
-    const message = body["Pesan dari Pendukung"];
+    const nominal_raw = body["amount"];
+    const donor_name = (body["supporter"] as string) || "Anonymous";
+    const message = body["message"] as string;
 
     // ── Validate required fields ──
     if (!nominal_raw || !message) {
       return NextResponse.json(
-        {
-          error: "Missing required fields: nominal, Pesan dari Pendukung",
-          received_fields: Object.keys(body),
-          received_body: body,
-          content_type: contentType,
-        },
+        { error: "Missing required fields: amount, message" },
         { status: 400 }
       );
     }
