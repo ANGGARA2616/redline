@@ -5,7 +5,7 @@ import type { Package, Jalur } from "@/types";
 import { Timestamp } from "firebase-admin/firestore";
 
 /**
- * POST /api/webhook/sociabuzz
+ * POST /api/webhook/sociabuzz?username=<streamer_username>
  *
  * Receives donation notifications from Sociabuzz and automatically
  * adds entries to the streamer's active queue session.
@@ -13,35 +13,44 @@ import { Timestamp } from "firebase-admin/firestore";
  * Uses Firebase Admin SDK (server-side) to bypass security rules.
  *
  * ──────────────────────────────────────────────
- * Expected request body:
+ * Query param:
+ *   ?username=jessnolimit
+ *
+ * Expected request body (Sociabuzz format):
  * {
- *   "streamer_username": "jessnolimit",
- *   "amount": 51000,
- *   "message": "166047234 gas kak mau bareng",
- *   "donor_name": "Budi"
+ *   "nominal": 51000,
+ *   "Nama Pendukung": "Budi",
+ *   "Pesan dari Pendukung": "166047234 gas kak mau bareng"
  * }
  * ──────────────────────────────────────────────
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
+    const { searchParams } = new URL(request.url);
+    const streamer_username = searchParams.get("username");
 
-    const {
-      streamer_username,
-      amount,
-      message,
-      donor_name,
-    } = body;
-
-    // ── Validate required fields ──
-    if (!streamer_username || !amount || !message) {
+    if (!streamer_username) {
       return NextResponse.json(
-        { error: "Missing required fields: streamer_username, amount, message" },
+        { error: "Missing query param: username" },
         { status: 400 }
       );
     }
 
-    const nominal = Number(amount);
+    const body = await request.json();
+
+    const nominal_raw = body["nominal"];
+    const donor_name = body["Nama Pendukung"] || "Anonymous";
+    const message = body["Pesan dari Pendukung"];
+
+    // ── Validate required fields ──
+    if (!nominal_raw || !message) {
+      return NextResponse.json(
+        { error: "Missing required fields: nominal, Pesan dari Pendukung" },
+        { status: 400 }
+      );
+    }
+
+    const nominal = Number(nominal_raw);
     if (isNaN(nominal) || nominal <= 0) {
       return NextResponse.json(
         { error: "Invalid amount" },
@@ -141,7 +150,7 @@ export async function POST(request: NextRequest) {
       detected: detectResult.matched
         ? `Auto-detected: ${totalGames} game ${jalur === "fast_track" ? "Fast Track" : "Normal"}`
         : `Anomaly: nominal Rp ${nominal.toLocaleString("id-ID")} tidak cocok dengan paket manapun. Ditambahkan sebagai 1 game Normal (manual review).`,
-      donor_name: donor_name || "Anonymous",
+      donor_name,
     });
   } catch (error) {
     console.error("Sociabuzz webhook error:", error);
