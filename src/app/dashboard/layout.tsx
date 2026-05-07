@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { daysRemaining } from "@/lib/utils";
-import { Gamepad2, LayoutDashboard, Settings, ScrollText, History, AlertTriangle, Sparkles, LogOut, Crown } from "lucide-react";
+import { Gamepad2, LayoutDashboard, Settings, ScrollText, History, AlertTriangle, Sparkles, LogOut, Crown, BookOpen, MessageSquare } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -65,6 +65,8 @@ export default function DashboardLayout({
     { href: "/dashboard/settings", label: "Paket Antrian", icon: <Settings className="w-4 h-4" /> },
     { href: "/dashboard/log", label: "Game Log", icon: <ScrollText className="w-4 h-4" /> },
     { href: "/dashboard/history", label: "Riwayat", icon: <History className="w-4 h-4" /> },
+    { href: "/dashboard/feedback", label: "Feedback", icon: <MessageSquare className="w-4 h-4" /> },
+    { href: "/dashboard/guide", label: "Panduan", icon: <BookOpen className="w-4 h-4" /> },
     { href: "/pricing", label: "Langganan", icon: <Crown className="w-4 h-4 text-[var(--qb-warning)]" /> },
   ];
 

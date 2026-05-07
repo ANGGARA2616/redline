@@ -16,7 +16,7 @@ import {
   type Unsubscribe,
 } from "firebase/firestore";
 import { getFirebaseDb } from "./firebase";
-import type { UserProfile, Package, Session, QueueEntry, GameLog } from "@/types";
+import type { UserProfile, Package, Session, QueueEntry, GameLog, Feedback } from "@/types";
 
 // ============================================================
 // Users
@@ -354,4 +354,19 @@ export async function updateGameLog(
  */
 export async function deleteGameLog(logId: string): Promise<void> {
   await deleteDoc(doc(getFirebaseDb(), "gameLogs", logId));
+}
+
+// ============================================================
+// Feedback
+// ============================================================
+
+export async function submitFeedback(
+  feedback: Omit<Feedback, "id" | "createdAt" | "status">
+): Promise<string> {
+  const ref = await addDoc(collection(getFirebaseDb(), "feedbacks"), {
+    ...feedback,
+    createdAt: Timestamp.now(),
+    status: "new",
+  });
+  return ref.id;
 }

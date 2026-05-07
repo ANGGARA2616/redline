@@ -70,5 +70,15 @@ service cloud.firestore {
       allow delete: if request.auth != null
         && resource.data.streamerId == request.auth.uid;
     }
+
+    // ──────────────────────────────────────────────
+    // Feedbacks
+    // Authenticated users can create their own feedback.
+    // No client-side read/update/delete — owner reads from Firebase Console.
+    // ──────────────────────────────────────────────
+    match /feedbacks/{feedbackId} {
+      allow create: if request.auth != null
+        && request.resource.data.userId == request.auth.uid;
+    }
   }
 }

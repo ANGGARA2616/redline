@@ -96,6 +96,23 @@ export interface GameLog {
 }
 
 // ============================================================
+// Feedback
+// ============================================================
+
+export interface Feedback {
+  id: string;
+  userId: string;
+  username: string;
+  email: string;
+  type: "bug" | "fitur" | "pengalaman" | "lainnya";
+  rating: number | null;
+  title: string;
+  description: string;
+  createdAt: Timestamp;
+  status: "new" | "read";
+}
+
+// ============================================================
 // Auto-detect helpers
 // ============================================================
 
